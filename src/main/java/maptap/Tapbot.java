@@ -38,7 +38,7 @@ public class Tapbot {
             return;
         }
         player.addScore(msg.score);
-        today.updateLeaderboard(player, msg.score);
+        today.updateLeaderboard(player, msg.score, msg.roundScores);
         allTimeLeaderboard.update(player, player.totalScore);
 
         if (msg.score > highScore) {

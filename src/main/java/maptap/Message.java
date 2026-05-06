@@ -4,6 +4,7 @@ public class Message {
     protected String date;
     protected String name;
     protected int score;
+    protected int[] roundScores;
 
     public Message(String body, String name) {
         /*
@@ -17,5 +18,9 @@ public class Message {
         String[] parts = body.split(" |\\n");
         this.date = parts[1].toUpperCase() + " " + parts[2];
         this.score = Integer.parseInt(parts[10]);
+        this.roundScores = new int[5];
+        for (int i = 0; i < 5; i++) {
+            this.roundScores[i] = Integer.parseInt(parts[3 + i].split(":")[0]);
+        }
     }
 }

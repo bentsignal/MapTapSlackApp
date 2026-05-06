@@ -21,8 +21,8 @@ public class Day {
         return true;
     }
 
-    public void updateLeaderboard(Player player, int score) {
-        leaderboard.update(player, score);
+    public void updateLeaderboard(Player player, int score, int[] roundScores) {
+        leaderboard.update(player, score, roundScores);
     }
 
     public boolean isToday() {

@@ -27,7 +27,10 @@ public class Main {
         resp.getMessages().reversed().forEach(m -> {
             String body = m.getText();
             String name = m.getUser();
-            if (body != null && body.contains("maptap.gg") && !body.contains("challenge")) {
+            if (body != null
+                    && body.contains("maptap.gg")
+                    && body.contains("Final score:")
+                    && !body.contains("challenge")) {
                 tapbot.addMsg(body, name);
             }
         });
@@ -37,7 +40,7 @@ public class Main {
             String name = event.getUser();
 
             // Check if this is a maptap message
-            if (body != null && body.contains("maptap.gg")) {
+            if (body != null && body.contains("maptap.gg") && body.contains("Final score:")) {
                 tapbot.addMsg(body, name);
             }
             return ctx.ack();
