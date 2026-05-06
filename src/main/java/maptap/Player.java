@@ -22,12 +22,7 @@ public class Player {
         this.topScore = Math.max(this.topScore, score);
         this.worstScore = Math.min(this.worstScore, score);
         this.gamesPlayed++;
-        if (gamesPlayed == 0) {
-            this.averageScore = score;
-        } else {
-            this.averageScore = ((this.averageScore * gamesPlayed) + score) / (gamesPlayed + 1);
-        }
-        this.gamesPlayed++;
+        this.averageScore = this.totalScore / this.gamesPlayed;
         return this.topScore;
     }
 

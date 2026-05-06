@@ -27,10 +27,7 @@ public class Main {
         resp.getMessages().reversed().forEach(m -> {
             String body = m.getText();
             String name = m.getUser();
-            if (body != null
-                    && body.contains("maptap.gg")
-                    && body.contains("Final score:")
-                    && !body.contains("challenge")) {
+            if (body != null && body.contains("maptap.gg") && body.contains("Final score:")) {
                 tapbot.addMsg(body, name);
             }
         });
@@ -39,7 +36,6 @@ public class Main {
             String body = event.getText();
             String name = event.getUser();
 
-            // Check if this is a maptap message
             if (body != null && body.contains("maptap.gg") && body.contains("Final score:")) {
                 tapbot.addMsg(body, name);
             }
@@ -63,6 +59,15 @@ public class Main {
             }
             return ctx.ack();
         });
+        app.command("/averages", (req, ctx) -> {
+            ChatPostMessageResponse response = ctx.client()
+                    .chatPostMessage(
+                            r -> r.channel(req.getPayload().getChannelId()).text(tapbot.averages()));
+            if (!response.isOk()) {
+                ctx.logger.error("Error posting message: " + response.getError());
+            }
+            return ctx.ack();
+        });
         app.command("/playerstats", (req, ctx) -> {
             String text = req.getPayload().getText();
             ctx.logger.info("Getting logs for text: " + text);
@@ -76,6 +81,15 @@ public class Main {
             ChatPostMessageResponse response = ctx.client()
                     .chatPostMessage(
                             r -> r.channel(req.getPayload().getChannelId()).text(tapbot.playerStats(name)));
+            if (!response.isOk()) {
+                ctx.logger.error("Error posting message: " + response.getError());
+            }
+            return ctx.ack();
+        });
+        app.command("/worst-locations", (req, ctx) -> {
+            ChatPostMessageResponse response = ctx.client()
+                    .chatPostMessage(
+                            r -> r.channel(req.getPayload().getChannelId()).text(tapbot.worstLocations()));
             if (!response.isOk()) {
                 ctx.logger.error("Error posting message: " + response.getError());
             }

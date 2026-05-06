@@ -1,6 +1,10 @@
 package maptap;
 
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class Tapbot {
 
@@ -38,7 +42,8 @@ public class Tapbot {
             return;
         }
         player.addScore(msg.score);
-        today.updateLeaderboard(player, msg.score, msg.roundScores);
+        today.updateLeaderboard(player, msg.score);
+        today.recordScores(msg.guesses, msg.score);
         allTimeLeaderboard.update(player, player.totalScore);
 
         if (msg.score > highScore) {
@@ -79,10 +84,53 @@ public class Tapbot {
         else return cmd + player.getStats();
     }
 
+    public String worstLocations() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Executing /worst-locations\n");
+        if (days.isEmpty()) {
+            sb.append("No locations to display");
+            return sb.toString();
+        }
+        List<Day> sorted = new ArrayList<>(days.values());
+        sorted.sort((a, b) -> Double.compare(a.averageFinalScore(), b.averageFinalScore()));
+        sb.append("Five worst locations by average score:\n");
+        int n = Math.min(5, sorted.size());
+        for (int i = 0; i < n; i++) {
+            Day d = sorted.get(i);
+            sb.append(i + 1)
+                    .append(". ")
+                    .append(d.getDate().toLowerCase())
+                    .append(" — worst guess: #")
+                    .append(d.worstGuessNumber())
+                    .append(" — avg: ")
+                    .append(String.format("%.1f", d.worstGuessAverage()))
+                    .append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String averages() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Executing /averages\n");
+        if (players.isEmpty()) {
+            sb.append("No averages to display");
+            return sb.toString();
+        }
+        sb.append("Average scores:\n");
+        players.values().stream()
+                .sorted(Comparator.comparingInt((Player p) -> p.averageScore).reversed())
+                .forEach(p -> sb.append("<@")
+                        .append(p.name)
+                        .append(">: ")
+                        .append(p.averageScore)
+                        .append("\n"));
+        return sb.toString();
+    }
+
     public String endOfDay() {
-        String currDay = java.time.LocalDate.now().getMonth() + " "
-                + java.time.LocalDate.now().getDayOfMonth();
-        if (!today.isToday()) {
+        java.time.ZonedDateTime now = java.time.ZonedDateTime.now(ZoneId.of("America/New_York"));
+        String currDay = now.getMonth() + " " + now.getDayOfMonth();
+        if (today == null || !today.isToday()) {
             today = days.get(currDay);
         }
         if (today == null) {
