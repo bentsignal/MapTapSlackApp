@@ -24,9 +24,5 @@ public class Message {
             this.guesses[i] = Integer.parseInt(colonIdx == -1 ? part : part.substring(0, colonIdx));
         }
         this.score = Integer.parseInt(parts[10]);
-        this.roundScores = new int[5];
-        for (int i = 0; i < 5; i++) {
-            this.roundScores[i] = Integer.parseInt(parts[3 + i].split(":")[0]);
-        }
     }
 }

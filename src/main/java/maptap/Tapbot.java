@@ -42,7 +42,7 @@ public class Tapbot {
             return;
         }
         player.addScore(msg.score);
-        today.updateLeaderboard(player, msg.score);
+        today.updateLeaderboard(player, msg.score, msg.guesses);
         today.recordScores(msg.guesses, msg.score);
         allTimeLeaderboard.update(player, player.totalScore);
 
