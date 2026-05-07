@@ -64,6 +64,8 @@ public class Tapbot {
             return sb.toString();
         }
         sb.append("All time stats\n");
+        sb.append("All time leaderboard:\n");
+        sb.append(allTimeLeaderboard.toString());
         sb.append("Best round: ")
                 .append(highScore)
                 .append(" held by <@")
@@ -80,8 +82,10 @@ public class Tapbot {
     public String playerStats(String name) {
         String cmd = "Executing /playerstats <<@" + name + ">>\n";
         Player player = players.get(name);
-        if (player == null) return cmd + "Player has no rounds to log";
-        else return cmd + player.getStats();
+        if (player == null)
+            return cmd + "Player has no rounds to log";
+        else
+            return cmd + player.getStats();
     }
 
     public String worstLocations() {
@@ -139,8 +143,6 @@ public class Tapbot {
         StringBuilder sb = new StringBuilder();
         sb.append("Today's leaderboard:\n");
         sb.append(today.leaderboard.toString()).append("\n\n");
-        sb.append("All time leaderboard:\n");
-        sb.append(allTimeLeaderboard.toString());
         return sb.toString();
     }
 }
