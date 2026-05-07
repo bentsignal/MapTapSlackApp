@@ -4,6 +4,12 @@ import com.slack.api.methods.request.conversations.ConversationsHistoryRequest;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.methods.response.conversations.ConversationsHistoryResponse;
 import com.slack.api.model.event.MessageEvent;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import listeners.Listeners;
 import maptap.Tapbot;
 
@@ -95,6 +101,30 @@ public class Main {
             }
             return ctx.ack();
         });
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "eod-scheduler");
+            t.setDaemon(true);
+            return t;
+        });
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
+        ZonedDateTime nextEod = now.toLocalDate().atTime(23, 59).atZone(ZoneId.of("America/New_York"));
+        if (now.isAfter(nextEod)) {
+            nextEod = nextEod.plusDays(1);
+        }
+        long initialDelay = Duration.between(now, nextEod).getSeconds();
+        scheduler.scheduleAtFixedRate(
+                () -> {
+                    try {
+                        String message = tapbot.endOfDay();
+                        app.client().chatPostMessage(r -> r.channel(convoID).text(message));
+                    } catch (Exception e) {
+                        System.err.println("Failed to post end-of-day message: " + e.getMessage());
+                    }
+                },
+                initialDelay,
+                TimeUnit.DAYS.toSeconds(1),
+                TimeUnit.SECONDS);
+
         // SocketModeApp expects an env variable: SLACK_APP_TOKEN
         new SocketModeApp(app).start();
     }

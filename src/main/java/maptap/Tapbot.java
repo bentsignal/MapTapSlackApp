@@ -82,10 +82,8 @@ public class Tapbot {
     public String playerStats(String name) {
         String cmd = "Executing /playerstats <<@" + name + ">>\n";
         Player player = players.get(name);
-        if (player == null)
-            return cmd + "Player has no rounds to log";
-        else
-            return cmd + player.getStats();
+        if (player == null) return cmd + "Player has no rounds to log";
+        else return cmd + player.getStats();
     }
 
     public String worstLocations() {
